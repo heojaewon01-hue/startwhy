@@ -773,7 +773,7 @@ function showResult() {
   document.getElementById('trust-section').style.display = 'none';
 
   const typeKey = calcType(answers);
-  const matched = results[typeKey];
+  const matched = results[typeKey];     if (typeKey === '새로운') { location.href = 'landing2.html'; return; }
 
   document.getElementById('result-stars').textContent = matched.stars;
   document.getElementById('result-title').textContent = matched.type;
