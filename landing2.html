@@ -25,6 +25,15 @@
     .ia { background: #fde8d8; } .ib { background: #ddeaf8; } .ic { background: #e8f4ea; }
     .sw-ot { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 2px; }
     .sw-od { font-size: 13px; color: #999; line-height: 1.5; }
+    .bridge { text-align: center; }
+    .bridge-badge { display: inline-block; padding: 6px 18px; border-radius: 30px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; background: #eef5f0; color: #3d6b4f; margin-bottom: 1.5rem; }
+    .bridge-emoji { font-size: 52px; display: block; margin-bottom: 1.2rem; }
+    .bridge-title { font-size: 23px; font-weight: 700; color: #1a1a1a; line-height: 1.4; margin-bottom: 1.4rem; }
+    .bridge-msg { font-size: 15px; color: #555; line-height: 1.9; margin-bottom: 0.6rem; }
+    .bridge-author { font-size: 12px; color: #bbb; margin-bottom: 1.8rem; }
+    .bridge-hint { font-size: 13px; color: #888; margin-bottom: 1.8rem; padding: 14px 16px; background: #f7f4ef; border-radius: 12px; line-height: 1.7; }
+    .bridge-btn { width: 100%; padding: 16px; border-radius: 12px; background: #3d6b4f; color: #fff; font-size: 16px; font-weight: 700; border: none; cursor: pointer; transition: background 0.2s, transform 0.12s; letter-spacing: 0.02em; }
+    .bridge-btn:hover { background: #2e5440; transform: translateY(-1px); }
     .sw-result { text-align: center; }
     .sw-badge { display: inline-block; padding: 7px 20px; border-radius: 30px; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 1rem; }
     .b-burn { background: #fde8d8; color: #b04e18; }
@@ -62,7 +71,16 @@
        ★ 데이터 영역 — 문항·결과·URL 수정은 여기서만 하세요
        ============================================================ */
 
-    /* -- 외부 링크 -- */
+    const BRIDGE = {
+      badge: '새출발형',
+      emoji: '🌱',
+      title: '새로운 시작을\n꿈꾸고 계시는군요.',
+      msg: '지금 이 선택 자체가 이미 용기입니다.\n많은 분들이 새로운 시작을 꿈꾸면서도\n첫 발을 내딛지 못합니다.\n당신은 이미 한 발짝 앞서 있습니다.',
+      author: '— 허재원',
+      hint: '딱 3가지만 더 여쭤볼게요.\n답변에 따라 당신에게 꼭 맞는 방으로 안내해 드립니다.',
+      btnLabel: '네, 시작할게요 →'
+    };
+
     const LINKS = {
       notion: {
         burnout:  'https://www.notion.so/360ad6f31a3b8035bf0ceb7cd60c0976',
@@ -72,15 +90,10 @@
       kakao: 'https://pf.kakao.com/_FxkxoxbX/chat'
     };
 
-    /* -- 질문 데이터 --
-       iconClass: ia=주황, ib=파랑, ic=초록
-       autoNext: true = 선택 즉시 자동 이동 */
     const QUESTIONS = [
       {
-        label: '질문 1 / 3',
-        question: '요즘 하루가 어떻게 느껴지나요?',
+        label: '질문 1 / 3', question: '요즘 하루가 어떻게 느껴지나요?',
         sub: '가장 솔직하게 느껴지는 것을 골라 주세요.',
-        autoNext: true,
         options: [
           { id: 'burnout',  iconClass: 'ia', emoji: '🔥', title: '바쁜데 공허하다',       desc: '열심히 사는데 뭔가 텅 빈 느낌' },
           { id: 'isolated', iconClass: 'ib', emoji: '🌙', title: '조용한데 외롭다',       desc: '아무 문제 없는데 혼자인 느낌' },
@@ -88,10 +101,8 @@
         ]
       },
       {
-        label: '질문 2 / 3',
-        question: '지금 가장 하고 싶은 것은?',
+        label: '질문 2 / 3', question: '지금 가장 하고 싶은 것은?',
         sub: '마음이 가는 쪽을 솔직하게 골라 주세요.',
-        autoNext: true,
         options: [
           { id: 'action',  iconClass: 'ia', emoji: '⚡', title: '뭔가 바로 해보고 싶다',          desc: '일단 움직이면서 방향을 찾고 싶다' },
           { id: 'connect', iconClass: 'ib', emoji: '💬', title: '누군가 얘기를 들어줬으면',       desc: '판단 없이 그냥 들어주는 사람이 필요하다' },
@@ -99,10 +110,8 @@
         ]
       },
       {
-        label: '질문 3 / 3',
-        question: '변화를 시작한다면 언제?',
+        label: '질문 3 / 3', question: '변화를 시작한다면 언제?',
         sub: '무리하게 다짐하지 않아도 됩니다.',
-        autoNext: true,
         options: [
           { id: 'now',    iconClass: 'ia', emoji: '🚀',  title: '지금 당장',     desc: '시간도 있고 마음의 준비도 됐다' },
           { id: 'soon',   iconClass: 'ib', emoji: '📅',  title: '이번 주 안에',  desc: '조금 준비하면 시작할 수 있을 것 같다' },
@@ -111,17 +120,10 @@
       }
     ];
 
-    /* -- 결과 데이터 --
-       구조: RESULTS[Q1답변].messages[Q2답변] → 제목+메시지
-             RESULTS[Q1답변].missions[Q3답변] → 오늘의 미션 */
     const RESULTS = {
       burnout: {
-        badge: '너무 애쓴 당신에게',
-        badgeClass: 'b-burn',
-        emoji: '🟢',
-        notionKey: 'burnout',
-        btnClass: 'nb-burn',
-        btnLabel: '🟢 애쓴 당신에게 → 맞춤방 열기',
+        badge: '너무 애쓴 당신에게', badgeClass: 'b-burn', emoji: '🟢',
+        notionKey: 'burnout', btnClass: 'nb-burn', btnLabel: '🟢 애쓴 당신에게 → 맞춤방 열기',
         messages: {
           action:  { title: '쉬는 것도 실력입니다.',     msg: '지금 당장 뭔가 하고 싶은 마음, 압니다.\n하지만 오늘만큼은 20분 핸드폰을 뒤집고 창밖을 보세요.\n그게 오늘의 미션입니다.' },
           connect: { title: '잘 하려고 너무 애쓰셨군요.', msg: '누군가 들어줬으면 하는 마음이 드는 건\n이미 충분히 혼자 버텼다는 신호입니다.\n카카오채널에 한 줄만 남겨 주세요.' },
@@ -134,12 +136,8 @@
         }
       },
       isolated: {
-        badge: '혼자였던 당신에게',
-        badgeClass: 'b-isol',
-        emoji: '🔵',
-        notionKey: 'isolated',
-        btnClass: 'nb-isol',
-        btnLabel: '🔵 혼자인 날 → 맞춤방 열기',
+        badge: '혼자였던 당신에게', badgeClass: 'b-isol', emoji: '🔵',
+        notionKey: 'isolated', btnClass: 'nb-isol', btnLabel: '🔵 혼자인 날 → 맞춤방 열기',
         messages: {
           action:  { title: '작은 연결부터 시작해 봅시다.',     msg: '바로 뭔가 하고 싶다면,\n오늘 10분만 밖에 나가 햇볕을 쬐어보세요.\n사람 말고 햇빛이랑 먼저 연결하는 겁니다.' },
           connect: { title: '오늘은 사람 말고, 햇빛이랑 먼저요.', msg: '누군가 들어줬으면 하는 마음,\n그 마음 자체가 아직 살아있다는 신호입니다.\n카카오채널에 한 줄 남겨 주세요. 읽어만 줄게요.' },
@@ -152,12 +150,8 @@
         }
       },
       drifting: {
-        badge: '방향을 찾는 당신에게',
-        badgeClass: 'b-drif',
-        emoji: '🟡',
-        notionKey: 'drifting',
-        btnClass: 'nb-drif',
-        btnLabel: '🟡 뭔가 빠진 날 → 맞춤방 열기',
+        badge: '방향을 찾는 당신에게', badgeClass: 'b-drif', emoji: '🟡',
+        notionKey: 'drifting', btnClass: 'nb-drif', btnLabel: '🟡 뭔가 빠진 날 → 맞춤방 열기',
         messages: {
           action:  { title: '방향을 모르는 게 아닙니다.',      msg: '아직 발견을 못 한 겁니다.\n일단 움직이고 싶다면, 단골 카페를 정해서\n혼자 1시간 앉아 있어보세요. 생각이 찾아옵니다.' },
           connect: { title: '서두르지 않아도 됩니다.',         msg: '뭔가 빠진 느낌, 누군가와 나누고 싶은 마음.\n그 감각이 이미 방향을 찾고 있다는 뜻입니다.\n카카오채널에 한 줄 남겨 주세요.' },
@@ -175,7 +169,7 @@
        ★ 엔진 영역 — 아래는 건드리지 마세요
        ============================================================ */
 
-    let step = 0;
+    let step = -1; /* -1=브릿지, 0~2=질문, 3=결과 */
     const ans = { q1: null, q2: null, q3: null };
     const keys = ['q1', 'q2', 'q3'];
     let locked = false;
@@ -187,6 +181,27 @@
         else if (i === step) c += ' active';
         return `<div class="${c}"></div>`;
       }).join('');
+    }
+
+    function renderBridge() {
+      renderDots();
+      const s = document.getElementById('screen');
+      s.className = 'slide';
+      s.innerHTML = `
+        <div class="bridge">
+          <div class="bridge-badge">${BRIDGE.badge}</div>
+          <div class="bridge-emoji">${BRIDGE.emoji}</div>
+          <div class="bridge-title">${BRIDGE.title.replace(/\n/g, '<br>')}</div>
+          <div class="bridge-msg">${BRIDGE.msg.replace(/\n/g, '<br>')}</div>
+          <div class="bridge-author">${BRIDGE.author}</div>
+          <div class="bridge-hint">${BRIDGE.hint.replace(/\n/g, '<br>')}</div>
+          <button class="bridge-btn" onclick="startQ()">${BRIDGE.btnLabel}</button>
+        </div>`;
+    }
+
+    function startQ() {
+      step = 0;
+      renderQ();
     }
 
     function renderQ() {
@@ -247,7 +262,7 @@
         </div>`;
     }
 
-    renderQ();
+    renderBridge();
 
   </script>
 </body>
