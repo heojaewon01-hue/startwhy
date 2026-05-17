@@ -768,20 +768,7 @@ function updateProgress(idx) {
 }
 
 function showResult() {
-  document.getElementById('questions').style.display = 'none';
-  document.querySelector('.progress-wrap').style.display = 'none';
-  document.getElementById('trust-section').style.display = 'none';
-
   const typeKey = calcType(answers);
-  const matched = results[typeKey];
-
-  document.getElementById('result-stars').textContent = matched.stars;
-  document.getElementById('result-title').textContent = matched.type;
-  document.getElementById('result-msg').textContent = matched.msg;
-  document.getElementById('result-cta').textContent = matched.cta;
-
-  // 유형별 랜딩2 연결
-  const ctaBtn = document.getElementById('result-cta');
   const landing2Map = {
     new:   'landing2_new.html',
     hobby: 'landing2_hobby.html',
@@ -791,13 +778,10 @@ function showResult() {
     first: 'landing2_first.html'
   };
   if (landing2Map[typeKey]) {
-    ctaBtn.href = landing2Map[typeKey];
+    location.href = landing2Map[typeKey];
   } else {
-    ctaBtn.href = 'https://pf.kakao.com/_FxkxoxbX/chat';
+    location.href = 'https://pf.kakao.com/_FxkxoxbX/chat';
   }
-
-  const result = document.getElementById('result');
-  result.style.display = 'block';
 }
 
 function restart() {
