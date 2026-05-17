@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Startway — 고통발견형</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #c45c5c;
+  --red-light: #fdecea;
+  --red-mid: #e8a8a8;
+  --green: #3d6b4f;
+  --bg: #fdf8f8;
+  --text: #1a1a1a;
+  --muted: #888;
+  --card-border: #f0d4d4;
+  --kakao: #FEE500;
+  --kakao-text: #3C1E1E;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.screen {
+  display: none;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.2rem 4rem;
+  animation: fadeUp 0.5s ease forwards;
+}
+.screen.active { display: flex; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.tag {
+  display: inline-block;
+  background: var(--red-light);
+  color: var(--red);
+  border: 1px solid var(--red);
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 14px;
+  margin-bottom: 1.4rem;
+  letter-spacing: 0.04em;
+}
+
+.bridge-icon { font-size: 56px; margin-bottom: 1rem; }
+
+.bridge-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(22px, 5vw, 28px);
+  font-weight: 700;
+  line-height: 1.6;
+  text-align: center;
+  margin-bottom: 1.2rem;
+  color: #1a1a1a;
+}
+
+.bridge-quote {
+  background: var(--red-light);
+  border-left: 4px solid var(--red);
+  border-radius: 0 12px 12px 0;
+  padding: 1rem 1.4rem;
+  font-size: 14px;
+  line-height: 1.85;
+  color: #4a1a1a;
+  max-width: 520px;
+  width: 100%;
+  margin-bottom: 1.2rem;
+}
+
+.consent-box {
+  background: #fff;
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  padding: 1rem 1.4rem;
+  max-width: 480px;
+  width: 100%;
+  margin-bottom: 1.4rem;
+  text-align: center;
+}
+.consent-box .cb-label { font-size: 13px; color: var(--muted); margin-bottom: 0.5rem; }
+.consent-box .cb-text  { font-size: 14px; line-height: 1.85; color: #333; }
+
+.progress-bar { display: flex; gap: 8px; margin-bottom: 2rem; }
+.pb-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #ccc;
+  transition: background 0.3s, transform 0.2s;
+}
+.pb-dot.active { background: var(--red); transform: scale(1.3); }
+.pb-dot.done   { background: var(--red-mid); }
+
+.q-step {
+  font-size: 12px; font-weight: 700;
+  color: var(--red); letter-spacing: 0.1em;
+  margin-bottom: 0.6rem;
+}
+
+.q-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(18px, 4.5vw, 24px);
+  font-weight: 700;
+  line-height: 1.6;
+  text-align: center;
+  margin-bottom: 2rem;
+  max-width: 480px;
+}
+
+.choices { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 480px; }
+
+.choice-btn {
+  background: #fff;
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 14px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  line-height: 1.6;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+.choice-btn:hover {
+  border-color: var(--red);
+  background: var(--red-light);
+  transform: translateX(4px);
+}
+
+.choice-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px; height: 24px;
+  background: var(--red);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.result-icon { font-size: 52px; margin-bottom: 0.8rem; }
+
+.result-msg {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(17px, 4vw, 22px);
+  font-weight: 700;
+  line-height: 1.7;
+  text-align: center;
+  max-width: 480px;
+  margin-bottom: 1.6rem;
+  color: #1a1a1a;
+  white-space: pre-line;
+}
+
+.result-mission {
+  background: #fff;
+  border: 1.5px solid var(--card-border);
+  border-radius: 16px;
+  padding: 1.2rem 1.4rem;
+  width: 100%; max-width: 480px;
+  margin-bottom: 1.6rem;
+}
+.rm-label { font-size: 11px; font-weight: 700; color: var(--red); letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+.rm-text  { font-size: 14px; line-height: 1.8; color: #333; white-space: pre-line; }
+
+/* 로드맵 카드 */
+.roadmap-card {
+  background: #fff;
+  border: 1.5px solid var(--card-border);
+  border-radius: 16px;
+  padding: 1.2rem 1.4rem;
+  width: 100%; max-width: 480px;
+  margin-bottom: 1.6rem;
+}
+.roadmap-card .rl { font-size: 11px; font-weight: 700; color: var(--red); letter-spacing: 0.08em; margin-bottom: 0.8rem; }
+.roadmap-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #333;
+}
+.roadmap-step:last-child { margin-bottom: 0; }
+.rs-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  background: var(--red-light);
+  color: var(--red);
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.notion-btn {
+  display: block; width: 100%; max-width: 480px;
+  background: var(--red); color: #fff;
+  border: none; border-radius: 14px;
+  padding: 15px 20px; font-size: 15px; font-weight: 700;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer; text-align: center; text-decoration: none;
+  margin-bottom: 12px;
+  transition: background 0.2s, transform 0.15s;
+}
+.notion-btn:hover { background: #a83e3e; transform: translateY(-2px); }
+
+.kakao-btn {
+  display: block; width: 100%; max-width: 480px;
+  background: var(--kakao); color: var(--kakao-text);
+  border: none; border-radius: 14px;
+  padding: 15px 20px; font-size: 15px; font-weight: 700;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer; text-align: center; text-decoration: none;
+  margin-bottom: 20px;
+  transition: background 0.2s, transform 0.15s;
+}
+.kakao-btn:hover { background: #f5d800; transform: translateY(-2px); }
+
+.philosophy {
+  font-size: 12px; color: var(--muted);
+  text-align: center; line-height: 1.8;
+  max-width: 420px;
+  border-top: 1px solid #f0d4d4;
+  padding-top: 1.2rem; margin-top: 0.4rem;
+}
+
+.primary-btn {
+  background: var(--red); color: #fff;
+  border: none; border-radius: 14px;
+  padding: 14px 32px; font-size: 15px; font-weight: 700;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.primary-btn:hover { background: #a83e3e; transform: translateY(-2px); }
+
+.logo {
+  font-size: 13px; font-weight: 700;
+  color: var(--green); letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ 브릿지 화면 ══════════════ -->
+<div id="screen-bridge" class="screen active">
+  <div class="logo">STARTWAY</div>
+  <div class="bridge-icon">🔥</div>
+  <div class="tag">고통발견형</div>
+  <div class="bridge-title">
+    오랫동안 혼자 고민하셨군요.<br>
+    당신의 생각이 맞습니다.
+  </div>
+  <div class="bridge-quote">
+    오랫동안 혼자 고민하셨죠?<br>
+    당신의 생각이 맞아요.<br><br>
+    이제 제가 길을 보여드릴게요.<br>
+    혼자 걸어가시면서 — 막히면 제게 물어보세요.<br><br>
+    <strong>— 허재원</strong>
+  </div>
+  <div class="consent-box">
+    <div class="cb-label">잠깐만요 🙏</div>
+    <div class="cb-text">
+      딱 3가지만 여쭤봐도 될까요?<br>
+      <strong>1분이면 충분합니다.</strong>
+    </div>
+  </div>
+  <button class="primary-btn" onclick="startQuiz()">네, 시작할게요 →</button>
+</div>
+
+<!-- ══════════════ Q1 화면 ══════════════ -->
+<div id="screen-q1" class="screen">
+  <div class="logo">STARTWAY</div>
+  <div class="progress-bar">
+    <div class="pb-dot active"></div>
+    <div class="pb-dot"></div>
+    <div class="pb-dot"></div>
+  </div>
+  <div class="q-step">Q 1 / 3</div>
+  <div class="q-title">그 생각, 얼마나 됐어요?</div>
+  <div class="choices">
+    <button class="choice-btn" onclick="selectQ('q1','A')">
+      <span class="choice-letter">A</span>1년 이상 — 확신이 점점 커지고 있어요
+    </button>
+    <button class="choice-btn" onclick="selectQ('q1','B')">
+      <span class="choice-letter">B</span>몇 달 됐어요 — 꼬리에 꼬리를 물어요
+    </button>
+    <button class="choice-btn" onclick="selectQ('q1','C')">
+      <span class="choice-letter">C</span>오래됐는데 — 아직 확신이 없어요
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════ Q2 화면 ══════════════ -->
+<div id="screen-q2" class="screen">
+  <div class="logo">STARTWAY</div>
+  <div class="progress-bar">
+    <div class="pb-dot done"></div>
+    <div class="pb-dot active"></div>
+    <div class="pb-dot"></div>
+  </div>
+  <div class="q-step">Q 2 / 3</div>
+  <div class="q-title">더 깊이 생각해 보셨어요?</div>
+  <div class="choices">
+    <button class="choice-btn" onclick="selectQ('q2','A')">
+      <span class="choice-letter">A</span>비용·판매 방법까지 생각해봤어요
+    </button>
+    <button class="choice-btn" onclick="selectQ('q2','B')">
+      <span class="choice-letter">B</span>중간에 막혀서 멈췄어요
+    </button>
+    <button class="choice-btn" onclick="selectQ('q2','C')">
+      <span class="choice-letter">C</span>누군가한테 확인받고 싶어요
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════ Q3 화면 ══════════════ -->
+<div id="screen-q3" class="screen">
+  <div class="logo">STARTWAY</div>
+  <div class="progress-bar">
+    <div class="pb-dot done"></div>
+    <div class="pb-dot done"></div>
+    <div class="pb-dot active"></div>
+  </div>
+  <div class="q-step">Q 3 / 3</div>
+  <div class="q-title">지금 가장 부족한 게 뭔가요?</div>
+  <div class="choices">
+    <button class="choice-btn" onclick="selectQ('q3','A')">
+      <span class="choice-letter">A</span>시작할 용기가 필요해요
+    </button>
+    <button class="choice-btn" onclick="selectQ('q3','B')">
+      <span class="choice-letter">B</span>자본이 필요해요
+    </button>
+    <button class="choice-btn" onclick="selectQ('q3','C')">
+      <span class="choice-letter">C</span>전문가의 조언이 필요해요
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════ 결과 화면 ══════════════ -->
+<div id="screen-result" class="screen">
+  <div class="logo">STARTWAY</div>
+  <div class="result-icon">🗺️</div>
+  <div class="tag">고통발견형 · 로드맵 통합방</div>
+  <div id="result-msg" class="result-msg"></div>
+
+  <!-- 로드맵 (고정) -->
+  <div class="roadmap-card">
+    <div class="rl">당신의 출구전략 — 단계별 로드맵</div>
+    <div class="roadmap-step"><span class="rs-num">1</span>특허·지재권 먼저 — 내 것부터 지키세요<br><span style="font-size:12px;color:#888">(허재원이 초안·조사·변리사 연결 도와드립니다)</span></div>
+    <div class="roadmap-step"><span class="rs-num">2</span>소자본 운영 설계 — 혼자 또는 인센티브 구조</div>
+    <div class="roadmap-step"><span class="rs-num">3</span>검증 후 확장 — 주변 도움·인센티브로</div>
+    <div class="roadmap-step"><span class="rs-num">4</span>투자자·경영자 매칭 — 시리즈A</div>
+    <div class="roadmap-step"><span class="rs-num">5</span>매각·시리즈B · 출구전략</div>
+    <div class="roadmap-step"><span class="rs-num">6</span>막히면 카카오채널로 — 언제든 물어보세요</div>
+  </div>
+
+  <div class="result-mission">
+    <div class="rm-label">지금 당장 할 것</div>
+    <div id="result-mission-text" class="rm-text"></div>
+  </div>
+
+  <a id="notion-btn" class="notion-btn" href="#" target="_blank">🗺️ 로드맵 통합방으로 가기</a>
+  <a id="kakao-btn" class="kakao-btn" href="#" target="_blank">💬 카카오채널 상담 신청</a>
+  <div class="philosophy">
+    "당신은 아이디어 오너입니다.\n사업은 전문가의 도움을 받으세요.\n허재원이 그 연결을 해드립니다."
+  </div>
+</div>
+
+<script>
+const KAKAO_URL = 'https://pf.kakao.com/_FxkxoxbX/chat';
+
+// Q1(깊이) × Q2(진행도) → 메시지
+const MATRIX = {
+  'A-A': '거의 다 왔습니다.\n지금 필요한 건 검증 하나입니다.\n길 놓아드리겠습니다.',
+  'A-B': '막힌 부분만 채우면 됩니다.\n아이디어는 이미 충분히 익었습니다.',
+  'A-C': '맞습니다.\n오래 생각해온 것 — 한번 같이 확인해봅시다.',
+  'B-A': '깊어지는 중입니다.\n그 꼬리들 — 사실 전부 답이 있습니다.',
+  'B-B': '막힌 것 당연합니다.\n혼자 여기까지 온 것만으로도 충분합니다.',
+  'B-C': '꼬리에 꼬리를 무는 그 질문들 —\n저도 같이 물어봤습니다. 같이 풀어봅시다.',
+  'C-A': '많이 왔습니다.\n확신이 없는 게 아니라 — 확인이 필요한 겁니다.',
+  'C-B': '혼자 오래 걸어온 길 — 방향은 맞습니다.\n이제 지도만 펼치면 됩니다.',
+  'C-C': '확인받고 싶은 마음 —\n그게 가장 현명한 다음 걸음입니다.'
+};
+
+// Q3 → 미션
+const MISSION = {
+  'A': '용기는 준비에서 옵니다.\n오늘, 아이디어를 종이 한 장에 적어보세요.\n적고 나면 — 생각보다 훨씬 선명해집니다.',
+  'B': '자본보다 특허가 먼저입니다.\n내 아이디어를 지키는 것 — 그게 첫 번째입니다.\n카카오채널에 "특허" 라고 입력해보세요.',
+  'C': '지금 바로 카카오채널에 오세요.\n아이디어 설명 한 줄만 남겨주시면 —\n허재원이 직접 확인해드립니다.'
+};
+
+const NOTION_HREF = 'https://www.notion.so/363ad6f31a3b81f0bb92d2eca70a522e';
+
+const answers = { q1: '', q2: '', q3: '' };
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = '';
+  window.scrollTo(0, 0);
+}
+
+function startQuiz() { showScreen('screen-q1'); }
+
+function selectQ(q, v) {
+  answers[q] = v;
+  const next = { q1: 'screen-q2', q2: 'screen-q3', q3: null };
+  if (next[q]) {
+    setTimeout(() => showScreen(next[q]), 120);
+  } else {
+    setTimeout(() => showResult(), 120);
+  }
+}
+
+function showResult() {
+  const key = answers.q1 + '-' + answers.q2;
+  const msg = MATRIX[key] || '당신의 생각이 맞습니다. 이제 길을 보여드리겠습니다.';
+  const mission = MISSION[answers.q3] || MISSION['C'];
+
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('result-mission-text').textContent = mission;
+
+  document.getElementById('notion-btn').href = NOTION_HREF + '?pvs=4';
+
+  const kakaoMsg = encodeURIComponent(
+    `안녕하세요. [고통발견형 · Q1-${answers.q1} · Q2-${answers.q2} · Q3-${answers.q3}] 결과입니다. 상담 요청드립니다.`
+  );
+  document.getElementById('kakao-btn').href = KAKAO_URL + '?text=' + kakaoMsg;
+
+  showScreen('screen-result');
+}
+</script>
+</body>
+</html>

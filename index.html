@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StarWhy — 창업 자가진단</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --card: #ffffff;
+    --border: #e0ddd5;
+    --navy: #1a2f5e;
+    --navy-light: #2a4480;
+    --gold: #c8a96e;
+    --gold-light: #e8c98e;
+    --text: #1a2035;
+    --text-muted: #6b7080;
+    --text-light: #9ba0b0;
+    --shadow: 0 4px 24px rgba(26,47,94,0.10);
+    --shadow-hover: 0 8px 36px rgba(26,47,94,0.16);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* 상단 장식 */
+  .top-bar {
+    height: 4px;
+    background: linear-gradient(90deg, var(--navy), var(--gold), var(--navy-light));
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* 헤더 */
+  header {
+    padding: 48px 0 36px;
+    text-align: center;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  .brand-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+
+  .brand-text {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 13px;
+    letter-spacing: 0.35em;
+    color: var(--navy);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(26px, 5vw, 38px);
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--navy);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.12s forwards;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--gold);
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    max-width: 480px;
+    margin: 0 auto 40px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.24s forwards;
+  }
+
+  /* 진행바 */
+  .progress-wrap {
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.36s forwards;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--navy), var(--gold));
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  /* 질문 카드 */
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 32px;
+    margin-bottom: 20px;
+    display: none;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    box-shadow: var(--shadow);
+  }
+
+  .question-card.active { display: block; }
+  .question-card.visible { opacity: 1; transform: translateY(0); }
+
+  .q-number {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  .q-text {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(16px, 3vw, 20px);
+    font-weight: 600;
+    line-height: 1.55;
+    margin-bottom: 24px;
+    color: var(--navy);
+  }
+
+  /* 선택지 */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    text-align: left;
+    width: 100%;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  .option:hover {
+    border-color: var(--navy);
+    background: rgba(26,47,94,0.04);
+    transform: translateX(3px);
+  }
+
+  .option.selected {
+    border-color: var(--navy);
+    background: rgba(26,47,94,0.07);
+  }
+
+  .option.selected .option-key {
+    background: var(--navy);
+    color: white;
+  }
+
+  .option-key {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.05em;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: rgba(26,47,94,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.22s ease;
+  }
+
+  .option-text {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+    padding-top: 2px;
+  }
+
+  /* 버튼 */
+  .btn-wrap {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    justify-content: flex-end;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    border: none;
+  }
+
+  .btn-prev {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .btn-prev:hover {
+    border-color: var(--navy);
+    color: var(--navy);
+  }
+
+  .btn-next {
+    background: var(--navy);
+    color: white;
+    box-shadow: 0 4px 16px rgba(26,47,94,0.25);
+  }
+
+  .btn-next:hover {
+    background: var(--navy-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(26,47,94,0.3);
+  }
+
+  .btn-next:disabled {
+    background: var(--border);
+    color: var(--text-light);
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* 결과 화면 */
+  #result {
+    display: none;
+    text-align: center;
+    padding: 20px 0 60px;
+  }
+
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 44px 32px;
+    box-shadow: var(--shadow);
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  .result-badge {
+    display: inline-block;
+    padding: 5px 16px;
+    background: rgba(200,169,110,0.12);
+    border: 1px solid var(--gold);
+    border-radius: 100px;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+
+  .result-stars {
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: var(--gold);
+    letter-spacing: 4px;
+  }
+
+  .result-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(22px, 4vw, 30px);
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+
+  .result-divider {
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--navy), var(--gold));
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+
+  .result-msg {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.9;
+    max-width: 480px;
+    margin: 0 auto 32px;
+  }
+
+  .result-cta {
+    display: block;
+    max-width: 300px;
+    margin: 0 auto 16px;
+    padding: 15px 32px;
+    background: var(--navy);
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-family: 'Noto Sans KR', sans-serif;
+    box-shadow: 0 4px 20px rgba(26,47,94,0.25);
+    transition: all 0.25s ease;
+  }
+
+  .result-cta:hover {
+    background: var(--navy-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(26,47,94,0.32);
+  }
+
+  .result-note {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-top: 16px;
+    line-height: 1.7;
+  }
+
+  .result-restart {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    background: none;
+    border: none;
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: color 0.2s;
+  }
+
+  .result-restart:hover { color: var(--navy); }
+
+  /* 신뢰 지표 */
+  .trust {
+    padding: 40px 0 60px;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.5s forwards;
+  }
+
+  .trust-label {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--text-light);
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+
+  .trust-items {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+  }
+
+  .trust-item {
+    text-align: center;
+    padding: 0 28px;
+    border-right: 1px solid var(--border);
+  }
+
+  .trust-item:last-child { border-right: none; }
+
+  .trust-num {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+
+  .trust-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* 하단 */
+  footer {
+    text-align: center;
+    padding: 24px 0 40px;
+    font-size: 12px;
+    color: var(--text-light);
+    border-top: 1px solid var(--border);
+  }
+
+  footer a {
+    color: var(--navy);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .question-card { padding: 24px 18px; }
+    .trust-item { padding: 0 16px; }
+    .result-card { padding: 32px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar"></div>
+
+<div class="container">
+  <header>
+    <div class="brand">
+      <div class="brand-dot"></div>
+      <div class="brand-text">StarWhy · 창업 자가진단</div>
+      <div class="brand-dot"></div>
+    </div>
+    <h1>왜 창업하려고<br><em>하시나요?</em></h1>
+    <p class="subtitle">10가지 질문으로 당신의 창업 유형을 찾아드립니다.<br>솔직하게 답하실수록 더 정확한 결과를 얻을 수 있습니다.</p>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span id="progress-text">질문 1 / 10</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+
+  <div id="questions"></div>
+
+  <div id="result">
+    <div class="result-card">
+      <div class="result-badge">진단 완료</div>
+      <div class="result-stars" id="result-stars"></div>
+      <div class="result-title" id="result-title"></div>
+      <div class="result-divider"></div>
+      <div class="result-msg" id="result-msg"></div>
+      <a href="https://pf.kakao.com/_FxkxoxbX/chat" class="result-cta" id="result-cta"></a>
+      <p class="result-note">첫 상담은 무료입니다.<br>상담 내용은 날짜와 함께 기록·보관됩니다. (법학사 허재원)</p>
+      <button class="result-restart" onclick="restart()">↺ 다시 진단하기</button>
+    </div>
+  </div>
+
+  <div class="trust" id="trust-section">
+    <div class="trust-label">허재원을 믿어도 되는 이유</div>
+    <div class="trust-items">
+      <div class="trust-item">
+        <div class="trust-num">25년</div>
+        <div class="trust-desc">제조·건설·배관<br>실전 경험</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-num">법학사</div>
+        <div class="trust-desc">상담 내용<br>기록·보관</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-num">지존</div>
+        <div class="trust-desc">네이버 지식인<br>창업조언 분야</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    © StarWhy · 허재원 &nbsp;|&nbsp;
+    <a href="https://pf.kakao.com/_FxkxoxbX">카카오채널 상담</a>
+  </footer>
+</div>
+
+<script>
+const questions = [
+  {
+    text: "창업을 처음 떠올린 순간은 언제였나요?",
+    options: [
+      { key: "A", text: "직장생활이 너무 힘들었을 때" },
+      { key: "B", text: "주변의 불편함을 발견했을 때" },
+      { key: "C", text: "성공한 사람의 이야기를 들었을 때" },
+      { key: "D", text: "문득 시간이 생겼을 때" }
+    ]
+  },
+  {
+    text: "지금 마음속에 해결하고 싶은 문제가 있나요?",
+    options: [
+      { key: "A", text: "아주 구체적으로 있다" },
+      { key: "B", text: "어렴풋이 있다" },
+      { key: "C", text: "아직 찾는 중이다" }
+    ]
+  },
+  {
+    text: "해결하고 싶다는 생각을 얼마나 오래 해왔나요?",
+    options: [
+      { key: "A", text: "1년 이상 꾸준히" },
+      { key: "B", text: "몇 달 됐다" },
+      { key: "C", text: "최근에 갑자기 생겼다" }
+    ]
+  },
+  {
+    text: "내가 가진 가장 소중한 자산은 무엇이라 생각하시나요?",
+    options: [
+      { key: "A", text: "오랜 현장 경험과 전문 지식" },
+      { key: "B", text: "생활 속에서 발견한 아이디어" },
+      { key: "C", text: "넘치는 시간과 열정" },
+      { key: "D", text: "든든한 인맥과 자본" }
+    ]
+  },
+  {
+    text: "내가 해결하려는 문제를 겪는 사람을 주변에서 본 적 있나요?",
+    options: [
+      { key: "A", text: "여러 명 직접 봤다" },
+      { key: "B", text: "한두 명 본 것 같다" },
+      { key: "C", text: "나만 그런 것 같다" }
+    ]
+  },
+  {
+    text: "창업 후 1년간 수익이 없어도 생활이 가능한가요?",
+    options: [
+      { key: "A", text: "충분히 가능하다" },
+      { key: "B", text: "6개월 정도는 버틸 수 있다" },
+      { key: "C", text: "솔직히 어렵다" }
+    ]
+  },
+  {
+    text: "주변 사람들이 나에게 가장 많이 물어보는 것은?",
+    options: [
+      { key: "A", text: "내 분야의 전문적인 것" },
+      { key: "B", text: "살림·육아·생활의 노하우" },
+      { key: "C", text: "아직 그런 경험이 없다" }
+    ]
+  },
+  {
+    text: "아이디어를 가족이나 친구에게 말해본 적 있나요?",
+    options: [
+      { key: "A", text: "말했고 공감을 받았다" },
+      { key: "B", text: "말했지만 반응이 별로였다" },
+      { key: "C", text: "아직 말하지 못했다" }
+    ]
+  },
+  {
+    text: "창업의 가장 큰 목적은 무엇인가요?",
+    options: [
+      { key: "A", text: "내가 발견한 문제를 풀고 싶어서" },
+      { key: "B", text: "경제적으로 자유로워지고 싶어서" },
+      { key: "C", text: "지금 직장에서 벗어나고 싶어서" },
+      { key: "D", text: "의미 있고 즐거운 일을 하고 싶어서" }
+    ]
+  },
+  {
+    text: "실패해도 이 길을 선택한 것을 후회하지 않을 자신이 있나요?",
+    options: [
+      { key: "A", text: "그렇다, 도전 자체가 의미 있다" },
+      { key: "B", text: "잘 모르겠다" },
+      { key: "C", text: "솔직히 두렵다" }
+    ]
+  }
+];
+
+function calcType(ans) {
+  // 점수 기반 분류
+  let scores = { pain: 0, exp: 0, hobby: 0, new: 0, seed: 0, first: 0 };
+
+  // 고통발견형
+  if (ans[0]==="B") scores.pain += 3;
+  if (ans[1]==="A") scores.pain += 3;
+  if (ans[4]==="A") scores.pain += 2;
+  if (ans[8]==="A") scores.pain += 2;
+  if (ans[2]==="A" || ans[2]==="B") scores.pain += 1;
+
+  // 경험자산형
+  if (ans[3]==="A" || ans[3]==="B") scores.exp += 3;
+  if (ans[6]==="A" || ans[6]==="B") scores.exp += 3;
+  if (ans[2]==="A") scores.exp += 2;
+  if (ans[4]==="A" || ans[4]==="B") scores.exp += 1;
+
+  // 소일거리형
+  if (ans[8]==="D") scores.hobby += 3;
+  if (ans[5]==="A") scores.hobby += 2;
+  if (ans[9]==="A") scores.hobby += 2;
+  if (ans[3]==="A") scores.hobby += 1;
+
+  // 새출발형
+  if (ans[0]==="A") scores.new += 3;
+  if (ans[8]==="C") scores.new += 3;
+  if (ans[1]==="B" || ans[1]==="C") scores.new += 1;
+
+  // 씨앗여정형
+  if (ans[0]==="C" || ans[0]==="D") scores.seed += 2;
+  if (ans[1]==="C") scores.seed += 3;
+  if (ans[2]==="C") scores.seed += 2;
+  if (ans[4]==="C") scores.seed += 1;
+
+  // 설레는첫걸음
+  if (ans[2]==="C") scores.first += 2;
+  if (ans[5]==="C") scores.first += 2;
+  if (ans[9]==="C") scores.first += 2;
+  if (ans[7]==="C") scores.first += 1;
+
+  // 가장 높은 점수 유형 반환
+  return Object.entries(scores).sort((a,b) => b[1]-a[1])[0][0];
+}
+
+const results = {
+  pain: {
+    type: "고통 발견형",
+    stars: "★★★★★",
+    msg: "당신은 가장 강한 창업의 씨앗을 품고 계십니다. 누군가의 불편함을 오래 바라봐 온 사람만이 진짜 문제를 풀 수 있습니다. 지금 바로 허재원과 이야기 나눠보세요.",
+    cta: "📞 무료 상담 신청하기"
+  },
+  exp: {
+    type: "경험 자산형",
+    stars: "★★★★★",
+    msg: "당신이 쌓아온 시간과 경험이 이미 누군가에게는 큰 도움입니다. 그것을 사업으로 만드는 일, 생각보다 가까이 있습니다.",
+    cta: "📞 내 경험으로 시작하는 창업 상담"
+  },
+  hobby: {
+    type: "소일거리형",
+    stars: "★★★★",
+    msg: "크지 않아도 됩니다. 오래, 즐겁게, 의미 있게. 그런 창업이 사실 가장 오래 살아남습니다. 함께 작고 단단한 시작을 설계해 봅시다.",
+    cta: "📞 작고 단단한 창업 설계 시작"
+  },
+  new: {
+    type: "새 출발을 꿈꾸는 분",
+    stars: "★★★",
+    msg: "직장이 힘드셨군요. 그 마음, 충분히 이해합니다. 다만 창업은 도망이 아니라 방향이 필요합니다. 먼저 '왜'를 찾는 시간을 가져보세요. StarWhy가 그 길을 함께 걷겠습니다.",
+    cta: "📞 방향 찾기 상담 신청"
+  },
+  seed: {
+    type: "씨앗을 찾는 여정 중",
+    stars: "★★",
+    msg: "아직 씨앗을 못 찾으셨군요. 괜찮습니다. 사실 이 단계가 가장 중요합니다. 서두르지 않아도 됩니다. 일상에서 불편함을 발견하는 눈을 먼저 키워보세요.",
+    cta: "📞 관찰하는 법 가이드 받기"
+  },
+  first: {
+    type: "설레는 첫 걸음",
+    stars: "★★",
+    msg: "창업에 대한 설렘, 정말 소중합니다. 다만 그 설렘이 오래가려면 조금 더 준비하는 시간이 필요합니다. 정부 지원 프로그램부터 먼저 알아보세요. StarWhy가 그 첫 길을 안내해 드리겠습니다.",
+    cta: "📞 정부 지원 프로그램 안내받기"
+  }
+};
+
+let answers = [];
+
+function buildQuestions() {
+  const container = document.getElementById('questions');
+  questions.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'question-card' + (i === 0 ? ' active' : '');
+    card.id = 'q' + i;
+    card.innerHTML = `
+      <div class="q-number">질문 ${i+1} / ${questions.length}</div>
+      <div class="q-text">${q.text}</div>
+      <div class="options">
+        ${q.options.map(o => `
+          <button class="option" onclick="selectOption(${i}, '${o.key}', this)">
+            <span class="option-key">${o.key}</span>
+            <span class="option-text">${o.text}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="btn-wrap">
+        ${i > 0 ? `<button class="btn btn-prev" onclick="prevQ(${i})">← 이전</button>` : ''}
+        <button class="btn btn-next" id="next-${i}" onclick="nextQ(${i})" disabled>
+          ${i < questions.length - 1 ? '다음 →' : '결과 보기 →'}
+        </button>
+      </div>
+    `;
+    container.appendChild(card);
+    if (i === 0) setTimeout(() => card.classList.add('visible'), 500);
+  });
+}
+
+function selectOption(qIdx, key, el) {
+  const card = document.getElementById('q' + qIdx);
+  card.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  answers[qIdx] = key;
+  document.getElementById('next-' + qIdx).disabled = false;
+}
+
+function nextQ(curr) {
+  if (!answers[curr]) return;
+  const card = document.getElementById('q' + curr);
+  card.classList.remove('visible');
+  setTimeout(() => {
+    card.classList.remove('active');
+    if (curr < questions.length - 1) {
+      const next = document.getElementById('q' + (curr + 1));
+      next.classList.add('active');
+      setTimeout(() => next.classList.add('visible'), 50);
+      updateProgress(curr + 1);
+    } else {
+      showResult();
+    }
+  }, 300);
+}
+
+function prevQ(curr) {
+  const card = document.getElementById('q' + curr);
+  card.classList.remove('visible');
+  setTimeout(() => {
+    card.classList.remove('active');
+    const prev = document.getElementById('q' + (curr - 1));
+    prev.classList.add('active');
+    setTimeout(() => prev.classList.add('visible'), 50);
+    updateProgress(curr - 1);
+  }, 300);
+}
+
+function updateProgress(idx) {
+  const pct = Math.round((idx / questions.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `질문 ${idx + 1} / ${questions.length}`;
+  document.getElementById('progress-pct').textContent = pct + '%';
+}
+
+function showResult() {
+  document.getElementById('questions').style.display = 'none';
+  document.querySelector('.progress-wrap').style.display = 'none';
+  document.getElementById('trust-section').style.display = 'none';
+
+  const typeKey = calcType(answers);
+  const matched = results[typeKey];
+
+  document.getElementById('result-stars').textContent = matched.stars;
+  document.getElementById('result-title').textContent = matched.type;
+  document.getElementById('result-msg').textContent = matched.msg;
+  document.getElementById('result-cta').textContent = matched.cta;
+
+  // 유형별 랜딩2 연결
+  const ctaBtn = document.getElementById('result-cta');
+  const landing2Map = {
+    new:   'landing2_new.html',
+    hobby: 'landing2_hobby.html',
+    seed:  'landing2_seed.html',
+    exp:   'landing2_exp.html',
+    pain:  'landing2_pain.html',
+    first: 'landing2_first.html'
+  };
+  if (landing2Map[typeKey]) {
+    ctaBtn.href = landing2Map[typeKey];
+  } else {
+    ctaBtn.href = 'https://pf.kakao.com/_FxkxoxbX/chat';
+  }
+
+  const result = document.getElementById('result');
+  result.style.display = 'block';
+}
+
+function restart() {
+  answers = [];
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('questions').style.display = 'block';
+  document.querySelector('.progress-wrap').style.display = 'block';
+  document.getElementById('trust-section').style.display = 'block';
+
+  document.querySelectorAll('.question-card').forEach((c, i) => {
+    c.classList.remove('active', 'visible');
+    c.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    const btn = document.getElementById('next-' + i);
+    if (btn) btn.disabled = true;
+  });
+
+  const first = document.getElementById('q0');
+  first.classList.add('active');
+  setTimeout(() => first.classList.add('visible'), 50);
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('progress-text').textContent = '질문 1 / 10';
+  document.getElementById('progress-pct').textContent = '0%';
+}
+
+buildQuestions();
+</script>
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Startway — 씨앗여정형</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue: #3a72b5;
+  --blue-light: #ddeaf8;
+  --blue-mid: #a8c8f0;
+  --green: #3d6b4f;
+  --bg: #f5f8fc;
+  --text: #1a1a1a;
+  --muted: #888;
+  --card-border: #ccdcee;
+  --kakao: #FEE500;
+  --kakao-text: #3C1E1E;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.screen {
+  display: none;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.2rem 4rem;
+  animation: fadeUp 0.5s ease forwards;
+}
+.screen.active { display: flex; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.tag {
+  display: inline-block;
+  background: var(--blue-light);
+  color: var(--blue);
+  border: 1px solid var(--blue);
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 14px;
+  margin-bottom: 1.4rem;
+  letter-spacing: 0.04em;
+}
+
+.bridge-icon { font-size: 56px; margin-bottom: 1rem; }
+
+.bridge-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(22px, 5vw, 28px);
+  font-weight: 700;
+  line-height: 1.6;
+  text-align: center;
+  margin-bottom: 1.2rem;
+  color: #1a1a1a;
+}
+
+.bridge-quote {
+  background: var(--blue-light);
+  border-left: 4px solid var(--blue);
+  border-radius: 0 12px 12px 0;
+  padding: 1rem 1.4rem;
+  font-size: 14px;
+  line-height: 1.85;
+  color: #0d2a4a;
+  max-width: 520px;
+  width: 100%;
+  margin-bottom: 1.2rem;
+}
+
+.consent-box {
+  background: #fff;
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  padding: 1rem 1.4rem;
+  max-width: 480px;
+  width: 100%;
+  margin-bottom: 1.4rem;
+  text-align: center;
+}
+.consent-box .cb-label { font-size: 13px; color: var(--muted); margin-bottom: 0.5rem; }
+.consent-box .cb-text  { font-size: 14px; line-height: 1.85; color: #333; }
+
+.progress-bar { display: flex; gap: 8px; margin-bottom: 2rem; }
+.pb-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #ccc;
+  transition: background 0.3s, transform 0.2s;
+}
+.pb-dot.active { background: var(--blue); transform: scale(1.3); }
+.pb-dot.done   { background: var(--blue-mid); }
+
+.q-step {
+  font-size: 12px; font-weight: 700;
+  color: var(--blue); letter-spacing: 0.1em;
+  margin-bottom: 0.6rem;
+}
+
+.q-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(18px, 4.5vw, 24px);
+  font-weight: 700;
+  line-height: 1.6;
+  text-align: center;
+  margin-bottom: 2rem;
+  max-width: 480px;
+}
+
+.choices { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 480px; }
+
+.choice-btn {
+  background: #fff;
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-size: 14px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  line-height: 1.6;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  display: flex;
+  align-items: center;
+}
+.choice-btn:hover {
+  border-color: var(--blue);
+  background: var(--blue-light);
+  transform: translateX(4px);
+}
+
+.choice-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px; height: 24px;
+  background: var(--blue);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+/* 결과 화면 */
+.result-icon { font-size: 52px; margin-bottom: 0.8rem; }
+
+.result-msg {
+  font-family: 'Noto Serif KR', serif;
+  font-size: clamp(17px, 4vw, 22px);
+  font-weight: 700;
+  line-height: 1.7;
+  text-align: center;
+  max-width: 480px;
+  margin-bottom: 1.6rem;
+  color: #1a1a1a;
+}
+
+.result-mission {
+  background: #fff;
+  border: 1.5px solid var(--card-border);
+  border-radius: 16px;
+  padding: 1.2rem 1.4rem;
+  width: 100%; max-width: 480px;
+  margin-bottom: 1.6rem;
+}
+.rm-label { font-size: 11px; font-weight: 700; color: var(--blue); letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+.rm-text  { font-size: 14px; line-height: 1.8; color: #333; white-space: pre-line; }
+
+.notion-btn {
+  display: block; width: 100%; max-width: 480px;
+  background: var(--blue); color: #fff;
+  border: none; border-radius: 14px;
+  padding: 15px 20px; font-size: 15px; font-weight: 700;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer; text-align: center; text-decoration: none;
+  margin-bottom: 12px;
+  transition: background 0.2s, transform 0.15s;
+}
+.notion-btn:hover { background: #2a5a9a; transform: translateY(-2px); }
+
+.kakao-btn {
+  display: block; width: 100%; max-width: 480px;
+  background: var(--kakao); color: var(--kakao-text);
+  border: none; border-radius: 14px;
+  padding: 15px 20px; font-size: 15px; font-weight: 700;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer; text-align: center; text-decoration: none;
+  margin-bottom: 20px;
+  transition: background 0.2s, transform 0.15s;
+}
+.kakao-btn:hover { background: #f5d800; transform: translateY(-2px); }
+
+.philosophy {
+  font-size: 12px; color: var(--muted);
+  text-align: center; line-height: 1.8;
+  max-width: 420px;
+  border-top: 1px solid #dde8f4;
+  padding-top: 1.2rem; margin-top: 0.4rem;
+}
+
+.primary-btn {
+  background: var(--blue); color: #fff;
+  border: none; border-radius: 14px;
+  padding: 14px 32px; font-size: 15px; font-weight: 700;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.primary-btn:hover { background: #2a5a9a; transform: translateY(-2px); }
+
+.logo {
+  font-size: 13px; font-weight: 700;
+  color: var(--green); letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ 브릿지 화면 ══════════════ -->
+<div id="screen-bridge" class="screen active">
+  <div class="logo">STARTWAY</div>
+  <div class="bridge-icon">🌱</div>
+  <div class="tag">씨앗여정형</div>
+  <div class="bridge-title">
+    아직 방향을 못 찾으셨군요.<br>
+    괜찮습니다.<br>씨앗을 찾는 것, 그게 먼저입니다.
+  </div>
+  <div class="bridge-quote">
+    절실하지 않아도 됩니다.<br>
+    지금 이 페이지를 열어본 것 자체가<br>
+    뭔가를 찾고 싶다는 신호입니다.<br><br>
+    서두르지 마세요. 같이 찾아봅시다.<br><br>
+    <strong>— 허재원</strong>
+  </div>
+  <div class="consent-box">
+    <div class="cb-label">잠깐만요 🙏</div>
+    <div class="cb-text">
+      딱 3가지만 여쭤봐도 될까요?<br>
+      <strong>1분이면 충분합니다.</strong>
+    </div>
+  </div>
+  <button class="primary-btn" onclick="startQuiz()">네, 시작할게요 →</button>
+</div>
+
+<!-- ══════════════ Q1 화면 ══════════════ -->
+<div id="screen-q1" class="screen">
+  <div class="logo">STARTWAY</div>
+  <div class="progress-bar">
+    <div class="pb-dot active"></div>
+    <div class="pb-dot"></div>
+    <div class="pb-dot"></div>
+  </div>
+  <div class="q-step">Q 1 / 3</div>
+  <div class="q-title">당신에게 성공이란 뭔가요?</div>
+  <div class="choices">
+    <button class="choice-btn" onclick="selectQ('q1','A')">
+      <span class="choice-letter">A</span>돈과 자유
+    </button>
+    <button class="choice-btn" onclick="selectQ('q1','B')">
+      <span class="choice-letter">B</span>하고 싶은 걸 하며 사는 것
+    </button>
+    <button class="choice-btn" onclick="selectQ('q1','C')">
+      <span class="choice-letter">C</span>남들에게 인정받는 것
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════ Q2 화면 ══════════════ -->
+<div id="screen-q2" class="screen">
+  <div class="logo">STARTWAY</div>
+  <div class="progress-bar">
+    <div class="pb-dot done"></div>
+    <div class="pb-dot active"></div>
+    <div class="pb-dot"></div>
+  </div>
+  <div class="q-step">Q 2 / 3</div>
+  <div class="q-title">요즘 내 모습은?</div>
+  <div class="choices">
+    <button class="choice-btn" onclick="selectQ('q2','A')">
+      <span class="choice-letter">A</span>하고 싶은 게 있는데 어떻게 할지 모르겠어요
+    </button>
+    <button class="choice-btn" onclick="selectQ('q2','B')">
+      <span class="choice-letter">B</span>찾아보는데 뭔지 모르겠어요
+    </button>
+    <button class="choice-btn" onclick="selectQ('q2','C')">
+      <span class="choice-letter">C</span>남들 보며 나도 될까 싶어요
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════ Q3 화면 ══════════════ -->
+<div id="screen-q3" class="screen">
+  <div class="logo">STARTWAY</div>
+  <div class="progress-bar">
+    <div class="pb-dot done"></div>
+    <div class="pb-dot done"></div>
+    <div class="pb-dot active"></div>
+  </div>
+  <div class="q-step">Q 3 / 3</div>
+  <div class="q-title">1년 후에도 지금과 똑같다면?</div>
+  <div class="choices">
+    <button class="choice-btn" onclick="selectQ('q3','A')">
+      <span class="choice-letter">A</span>그건 안 됩니다. 바꿔야 해요
+    </button>
+    <button class="choice-btn" onclick="selectQ('q3','B')">
+      <span class="choice-letter">B</span>좀 불안한데 더 찾아볼게요
+    </button>
+    <button class="choice-btn" onclick="selectQ('q3','C')">
+      <span class="choice-letter">C</span>뭐 어쩌겠어요
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════ 결과 화면 ══════════════ -->
+<div id="screen-result" class="screen">
+  <div class="logo">STARTWAY</div>
+  <div id="result-icon" class="result-icon"></div>
+  <div class="tag" id="result-tag"></div>
+  <div id="result-msg" class="result-msg"></div>
+  <div class="result-mission">
+    <div class="rm-label">오늘의 미션</div>
+    <div id="result-mission-text" class="rm-text"></div>
+  </div>
+  <a id="notion-btn" class="notion-btn" href="#" target="_blank">🌱 내 맞춤방으로 가기</a>
+  <a id="kakao-btn" class="kakao-btn" href="#" target="_blank">💬 카카오채널 상담 신청</a>
+  <div class="philosophy">
+    "창업이 답이 아닐 수 있습니다. 당신의 행복이 답입니다.<br>
+    꼭 필요한 날, 언제든 오세요. — 허재원"
+  </div>
+</div>
+
+<script>
+// ── 데이터 ────────────────────────────────────────
+const KAKAO_URL = 'https://pf.kakao.com/_FxkxoxbX/chat';
+
+// Q1(성공관) × Q2(현재상태) → 메시지
+const MATRIX = {
+  'A-A': { msg: '돈과 자유, 맞습니다.\n하고 싶은 게 있다면 — 그게 이미 씨앗입니다.', icon: '🌱' },
+  'A-B': { msg: '찾고 있다는 것 자체가 이미 시작입니다.\n방향만 잡으면 생각보다 가깝습니다.', icon: '🌱' },
+  'A-C': { msg: '될 수 있습니다.\n단 — 남들 따라가면 절대 안 됩니다.\n나만의 이유가 먼저입니다.', icon: '🌱' },
+  'B-A': { msg: '하고 싶은 게 있다는 것 — 그게 전부입니다.\n그 마음 놓치지 마세요.', icon: '🔥' },
+  'B-B': { msg: '찾고 있는 그 과정이 이미 길입니다.\n서두르지 않아도 됩니다.', icon: '🌱' },
+  'B-C': { msg: '내가 뭘 할 때 시간 가는 줄 모르는지 —\n그게 씨앗입니다.', icon: '🌱' },
+  'C-A': { msg: '인정은 자기 길 가는 사람한테 옵니다.\n하고 싶은 것부터 시작하세요.', icon: '🔥' },
+  'C-B': { msg: '느려도 방향이 맞는 게 훨씬 낫습니다.', icon: '🌱' },
+  'C-C': { msg: '인정은 자기 길 가는 사람한테 옵니다.\n지금 이 자리에서 — 내 길을 먼저 찾아봅시다.', icon: '🌑' }
+};
+
+// Q3 → 노션방 + 미션
+const NOTION = {
+  'A': {
+    label: '🔥 인생 이제 시작!',
+    href: 'https://www.notion.so/363ad6f31a3b81f4999eecc8779cf266',
+    mission: '오늘, 지금 당장 하고 싶은 것 딱 하나만 적어보세요.\n내일 다시 봤을 때도 같은 게 적혀 있다면 — 그게 씨앗입니다.'
+  },
+  'B': {
+    label: '🌑 깊숙한 고민',
+    href: 'https://www.notion.so/363ad6f31a3b81f2acfae04f35f1d2ad',
+    mission: '이번 주, 내가 시간 가는 줄 모르고 했던 일 하나만 기억해 보세요.\n기억만 해도 됩니다. 서두르지 않아도 됩니다.'
+  },
+  'C': {
+    label: '🌑 깊숙한 고민',
+    href: 'https://www.notion.so/363ad6f31a3b81f2acfae04f35f1d2ad',
+    mission: '절실해지는 날이 오면 — 그때 다시 오세요.\n문은 열려 있습니다. — 허재원'
+  }
+};
+
+// ── 상태 ────────────────────────────────────────
+const answers = { q1: '', q2: '', q3: '' };
+const screens = ['screen-bridge', 'screen-q1', 'screen-q2', 'screen-q3', 'screen-result'];
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = '';
+  window.scrollTo(0, 0);
+}
+
+function startQuiz() { showScreen('screen-q1'); }
+
+function selectQ(q, v) {
+  answers[q] = v;
+  const next = { q1: 'screen-q2', q2: 'screen-q3', q3: null };
+  if (next[q]) {
+    setTimeout(() => showScreen(next[q]), 120);
+  } else {
+    setTimeout(() => showResult(), 120);
+  }
+}
+
+function showResult() {
+  const key = answers.q1 + '-' + answers.q2;
+  const matrix = MATRIX[key] || { msg: '씨앗을 찾는 여정, 이미 시작됐습니다.', icon: '🌱' };
+  const notion = NOTION[answers.q3] || NOTION['C'];
+
+  document.getElementById('result-icon').textContent = matrix.icon;
+  document.getElementById('result-tag').textContent = '씨앗여정형 · ' + notion.label;
+  document.getElementById('result-msg').textContent = matrix.msg;
+  document.getElementById('result-mission-text').textContent = notion.mission;
+
+  const notionBtn = document.getElementById('notion-btn');
+  notionBtn.textContent = notion.label + ' →';
+  notionBtn.href = notion.href + '?pvs=4';
+
+  const kakaoMsg = encodeURIComponent(
+    `안녕하세요. [씨앗여정형 · Q1-${answers.q1} · Q2-${answers.q2} · Q3-${answers.q3}] 결과입니다. 상담 요청드립니다.`
+  );
+  document.getElementById('kakao-btn').href = KAKAO_URL + '?text=' + kakaoMsg;
+
+  showScreen('screen-result');
+}
+</script>
+</body>
+</html>
